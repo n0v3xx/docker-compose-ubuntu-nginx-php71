@@ -1,0 +1,60 @@
+version: '2'
+
+services:
+#    base_mysql:
+#        image: mysql:5.6
+#        container_name: base_mysql
+#        environment:
+#            MYSQL_ROOT_PASSWORD: dev
+#            MYSQL_DATABASE: dev
+#            MYSQL_USER: dev
+#            MYSQL_PASSWORD: dev
+#        ports:
+#            - "13306:3306"
+#        network_mode: "bridge"
+#
+#    base_memcached:
+#        image: memcached
+#        container_name: base_memcached
+#        network_mode: "bridge"
+#
+#    base_mongo:
+#        image: mongo
+#        container_name: base_mongo
+#        network_mode: "bridge"
+
+    base_web:
+        container_name: base_web
+        build:
+            context: ./../../../
+            dockerfile: ./docker/ubuntu/php71/Dockerfile
+            args:
+              userId: ${USER_ID}
+              userName: ${USER_NAME}
+              userHome: ${USER_HOME}
+              groupId: ${GROUP_ID}
+              groupName: ${GROUP_NAME}
+              remoteHost: ${REMOTE_HOST}
+#        depends_on:
+#            - base_mysql
+#            - base_gearman
+#            - base_memcached
+#            - base_mongo
+#        links:
+#            - base_mysql
+#            - base_gearman
+#            - base_memcached
+#            - base_mongo
+        ports:
+            - "8990:80"
+            - "8991:81"
+            - "8993:443"
+        volumes:
+            - $SSH_AUTH_SOCK:$SSH_AUTH_SOCK
+            - ./../../../:/var/www/application
+        environment:
+            - SSH_AUTH_SOCK
+            - PHP_IDE_CONFIG=serverName=localhost
+        working_dir: /var/www/application
+        hostname: base-web-container
+        network_mode: "bridge"
